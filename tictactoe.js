@@ -27,7 +27,7 @@ const gameBoard = (() => {
   }
 
   function makeMove(symbol, gridLocation) {
-    if (getLegalMoves().includes(gridLocation)) {
+    if (getLegalMoves().includes(Number(gridLocation))) {
       gameArray[gridLocation] = symbol;
       return true;
     }
@@ -87,6 +87,7 @@ const Gamemaster = (() => {
     } else {
       human.move = 0;
       computer.move = 1;
+      playRound();
     }
   }
 
@@ -110,7 +111,7 @@ const Gamemaster = (() => {
       Display.renderBoard(gameBoard.getBoardState());
       return playRound();
     }
-    const computerMove = getRandomLegalMove();
+    const computerMove = gameBoard.getLegalMoves()[getRandomLegalMove()];
     if (!gameBoard.makeMove(computer.symbol, computerMove)) {
       return 'error: must be valid computer move';
     }
