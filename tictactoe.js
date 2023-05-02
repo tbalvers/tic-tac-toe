@@ -43,9 +43,17 @@ const gameBoard = (() => {
     getLegalMoves,
     makeMove,
     getBoardState,
+    emptyCell,
   };
 })();
 
-const Display = () => {
-  displayBoard = document.querySelector;
-};
+const Display = (() => {
+  function renderBoard(boardState) {
+    for (let i = 0; i < boardState.length; i += 1) {
+      if (boardState[i] !== gameBoard.emptyCell) {
+        document.getElementById(`${i}`).textContent = boardState[i];
+      }
+    }
+  }
+  return { renderBoard };
+})();
