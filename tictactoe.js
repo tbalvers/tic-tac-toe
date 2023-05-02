@@ -66,7 +66,12 @@ const Display = (() => {
     });
   }
 
-  return { renderBoard, getPlayerMove };
+  function printResult(gameResult) {
+    const result = document.querySelector('#result');
+    result.textContent = gameResult;
+  }
+
+  return { renderBoard, getPlayerMove, printResult };
 })();
 
 const Person = (playerName, playerSymbol) => {
@@ -98,14 +103,6 @@ const Gamemaster = (() => {
     Display.getPlayerMove();
   }
 
-  function announceWinner(winner) {
-    console.log(winner);
-  }
-
-  function announceTie() {
-    console.log('tie');
-  }
-
   function assessWin() {
     const winConditions = [
       [0, 1, 2],
@@ -118,26 +115,33 @@ const Gamemaster = (() => {
       [0, 4, 8],
     ];
 
+    let winner = 'none';
+
     winConditions.forEach((condition) => {
       if (
         gameBoard.getBoardState()[[condition[0]]] === human.symbol &&
         gameBoard.getBoardState()[[condition[1]]] === human.symbol &&
         gameBoard.getBoardState()[[condition[2]]] === human.symbol
       ) {
-        announceWinner('human');
+        Display.renderBoard(gameBoard.getBoardState());
+        Display.printResult('Human wins!');
+        winner = 'human';
       }
       if (
         gameBoard.getBoardState()[[condition[0]]] === computer.symbol &&
         gameBoard.getBoardState()[[condition[1]]] === computer.symbol &&
         gameBoard.getBoardState()[[condition[2]]] === computer.symbol
       ) {
-        announceWinner('computer');
+        Display.renderBoard(gameBoard.getBoardState());
+        Display.printResult('Computer wins!');
+        winner = 'computer';
       }
     });
+    return winner;
   }
 
   function assessTie() {
-    if (gameBoard.getLegalMoves().length === 0) announceTie();
+    if (gameBoard.getLegalMoves().length === 0) Display.printResult('Tie!');
   }
 
   function getRandomLegalMove() {
@@ -146,25 +150,34 @@ const Gamemaster = (() => {
 
   function playRound(humanMove) {
     if (human.move === 1) {
+      if (assessWin() !== 'none') {
+        return 'game over';
+      }
       if (!gameBoard.makeMove(human.symbol, humanMove)) {
         return 'error: must be valid human move';
       }
       human.move = 0;
       computer.move = 1;
       Display.renderBoard(gameBoard.getBoardState());
-      assessWin();
-      assessTie();
-      return playRound();
+      if (assessWin() === 'none') {
+        assessTie();
+        return playRound();
+      }
     }
     const computerMove = gameBoard.getLegalMoves()[getRandomLegalMove()];
+    if (assessWin() !== 'none') {
+      return 'game over';
+    }
     if (!gameBoard.makeMove(computer.symbol, computerMove)) {
       return 'error: must be valid computer move';
     }
     human.move = 1;
     computer.move = 0;
     Display.renderBoard(gameBoard.getBoardState());
-    assessWin();
-    assessTie();
+    if (assessWin() === 'none') {
+      assessTie();
+      return playRound();
+    }
     return 'successfully played computer move';
   }
 
@@ -172,8 +185,6 @@ const Gamemaster = (() => {
 
   return {
     playRound,
-    announceWinner,
-    announceTie,
     human,
     computer,
   };
