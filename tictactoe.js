@@ -55,5 +55,71 @@ const Display = (() => {
       }
     }
   }
-  return { renderBoard };
+
+  function getPlayerMove() {
+    const columns = document.querySelectorAll('.column');
+    columns.forEach((column) => {
+      column.addEventListener('click', (event) => {
+        Gamemaster.playRound(event.target.id);
+      });
+    });
+  }
+
+  return { renderBoard, getPlayerMove };
+})();
+
+const Person = (playerName, playerSymbol) => {
+  const name = playerName;
+  const symbol = playerSymbol;
+  let move;
+  return { name, symbol, move };
+};
+
+const Gamemaster = (() => {
+  const human = Person('Human', '🇨🇦');
+  const computer = Person('Computer', '🇧🇷');
+
+  function getFirstMove() {
+    const firstMove = Math.round(Math.random());
+    if (firstMove === 0) {
+      human.move = 1;
+      computer.move = 0;
+    } else {
+      human.move = 0;
+      computer.move = 1;
+    }
+  }
+
+  function setupGame() {
+    gameBoard.newGameState();
+    getFirstMove();
+    Display.getPlayerMove();
+  }
+
+  function getRandomLegalMove() {
+    return Math.floor(Math.random() * gameBoard.getLegalMoves().length);
+  }
+
+  function playRound(humanMove) {
+    if (human.move === 1) {
+      if (!gameBoard.makeMove(human.symbol, humanMove)) {
+        return 'error: must be valid human move';
+      }
+      human.move = 0;
+      computer.move = 1;
+      Display.renderBoard(gameBoard.getBoardState());
+      return playRound();
+    }
+    const computerMove = getRandomLegalMove();
+    if (!gameBoard.makeMove(computer.symbol, computerMove)) {
+      return 'error: must be valid computer move';
+    }
+    human.move = 1;
+    computer.move = 0;
+    Display.renderBoard(gameBoard.getBoardState());
+    return 'successfully played computer move';
+  }
+
+  setupGame();
+  return { playRound };
 })();
