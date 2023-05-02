@@ -7,25 +7,29 @@
     <title>Tic-Tac-Toe</title>
     <script src="tictactoe.js" defer></script>
     <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lilita+One&display=swap" rel="stylesheet">
 </head>
 <body>
     <h1>Tic-Tac-Toe</h1>
     <div class="board">
         <div class="row">
             <div class="column" id="0"></div>
-            <div class="column" id="1"></div>
+            <div class="column left right" id="1"></div>
             <div class="column" id="2"></div>
         </div>
         <div class="row">
-            <div class="column" id="3"></div>
-            <div class="column" id="4"></div>
-            <div class="column" id="5"></div>
+            <div class="column top bottom" id="3"></div>
+            <div class="column top bottom left right" id="4"></div>
+            <div class="column top bottom" id="5"></div>
         </div>
         <div class="row">
             <div class="column" id="6"></div>
-            <div class="column" id="7"></div>
+            <div class="column left right" id="7"></div>
             <div class="column" id="8"></div>
         </div>
     </div>
+    <h1 id="result">Game in progress...</h1>
 </body>
 </html>
