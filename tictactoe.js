@@ -1,3 +1,4 @@
+/* eslint-disable operator-linebreak */
 const gameBoard = (() => {
   // eslint-disable-next-line prefer-const
   let gameArray = ['x', 'x', 'x', 'vacant', 'vacant', 'vacant', 'x', 'x', 'x'];
@@ -97,6 +98,48 @@ const Gamemaster = (() => {
     Display.getPlayerMove();
   }
 
+  function announceWinner(winner) {
+    console.log(winner);
+  }
+
+  function announceTie() {
+    console.log('tie');
+  }
+
+  function assessWin() {
+    const winConditions = [
+      [0, 1, 2],
+      [3, 4, 5],
+      [6, 7, 8],
+      [0, 3, 6],
+      [1, 4, 7],
+      [2, 5, 8],
+      [2, 4, 6],
+      [0, 4, 8],
+    ];
+
+    winConditions.forEach((condition) => {
+      if (
+        gameBoard.getBoardState()[[condition[0]]] === human.symbol &&
+        gameBoard.getBoardState()[[condition[1]]] === human.symbol &&
+        gameBoard.getBoardState()[[condition[2]]] === human.symbol
+      ) {
+        announceWinner('human');
+      }
+      if (
+        gameBoard.getBoardState()[[condition[0]]] === computer.symbol &&
+        gameBoard.getBoardState()[[condition[1]]] === computer.symbol &&
+        gameBoard.getBoardState()[[condition[2]]] === computer.symbol
+      ) {
+        announceWinner('computer');
+      }
+    });
+  }
+
+  function assessTie() {
+    if (gameBoard.getLegalMoves().length === 0) announceTie();
+  }
+
   function getRandomLegalMove() {
     return Math.floor(Math.random() * gameBoard.getLegalMoves().length);
   }
@@ -109,6 +152,8 @@ const Gamemaster = (() => {
       human.move = 0;
       computer.move = 1;
       Display.renderBoard(gameBoard.getBoardState());
+      assessWin();
+      assessTie();
       return playRound();
     }
     const computerMove = gameBoard.getLegalMoves()[getRandomLegalMove()];
@@ -118,9 +163,18 @@ const Gamemaster = (() => {
     human.move = 1;
     computer.move = 0;
     Display.renderBoard(gameBoard.getBoardState());
+    assessWin();
+    assessTie();
     return 'successfully played computer move';
   }
 
   setupGame();
-  return { playRound };
+
+  return {
+    playRound,
+    announceWinner,
+    announceTie,
+    human,
+    computer,
+  };
 })();
