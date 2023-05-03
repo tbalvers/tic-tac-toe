@@ -53,6 +53,8 @@ const Display = (() => {
     for (let i = 0; i < boardState.length; i += 1) {
       if (boardState[i] !== gameBoard.emptyCell) {
         document.getElementById(`${i}`).textContent = boardState[i];
+      } else {
+        document.getElementById(`${i}`).textContent = '';
       }
     }
   }
@@ -71,7 +73,14 @@ const Display = (() => {
     result.textContent = gameResult;
   }
 
-  return { renderBoard, getPlayerMove, printResult };
+  const reset = document.querySelector('#refresh');
+
+  return {
+    renderBoard,
+    getPlayerMove,
+    printResult,
+    reset,
+  };
 })();
 
 const Person = (playerName, playerSymbol) => {
@@ -101,6 +110,8 @@ const Gamemaster = (() => {
     gameBoard.newGameState();
     getFirstMove();
     Display.getPlayerMove();
+    Display.renderBoard(gameBoard.getBoardState());
+    Display.printResult('Game in progress...');
   }
 
   function assessWin() {
@@ -182,6 +193,7 @@ const Gamemaster = (() => {
   }
 
   setupGame();
+  Display.reset.addEventListener('click', () => setupGame());
 
   return {
     playRound,
